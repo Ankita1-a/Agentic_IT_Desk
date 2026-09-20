@@ -1,6 +1,6 @@
 #  Autonomous IT Incident Triage Engine
 
-[![CI](https://github.com/Ankita1-a/IT-TRIAGE-ENGINE/actions/workflows/ci.yml/badge.svg)](https://github.com/Ankita1-a/IT-TRIAGE-ENGINE/actions/workflows/ci.yml)
+[![CI](https://github.com/Ankita1-a/Agentic_IT_Desk/actions/workflows/ci.yml/badge.svg)](https://github.com/Ankita1-a/Agentic_IT_Desk/actions/workflows/ci.yml)
 
 An AI agent system that ingests JSON IT support tickets, classifies them, retrieves relevant internal policy context via RAG, and drafts a resolution or escalates to a human — built with FastAPI, LangGraph, ChromaDB, and Mistral.
 
