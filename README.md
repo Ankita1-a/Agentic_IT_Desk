@@ -1,4 +1,4 @@
-# 🎫 Autonomous IT Incident Triage Engine
+#  Autonomous IT Incident Triage Engine
 
 [![CI](https://github.com/Ankita1-a/IT-TRIAGE-ENGINE/actions/workflows/ci.yml/badge.svg)](https://github.com/Ankita1-a/IT-TRIAGE-ENGINE/actions/workflows/ci.yml)
 
