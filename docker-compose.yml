@@ -1,0 +1,31 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: it-triage-engine:latest
+    container_name: it-triage-engine
+    ports:
+      - "8000:8000"
+    env_file:
+      # Never committed. Copy .env.example -> .env and fill in
+      # MISTRAL_API_KEY there — Compose injects it as a real
+      # environment variable inside the container at runtime; it is
+      # never written into the image or this file.
+      - .env
+    volumes:
+      # Named volume, not a bind mount: on first run Docker seeds it
+      # from the image's /app/chroma_db (baked in at build time), then
+      # persists it across restarts/rebuilds so you don't lose data or
+      # re-download the embedding model just by recreating the container.
+      - chroma_data:/app/chroma_db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+volumes:
+  chroma_data:

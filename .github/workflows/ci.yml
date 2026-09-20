@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run test suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      # No MISTRAL_API_KEY secret needed here: every test in test_main.py
+      # mocks the LLM/graph boundary (see Step 8), so the suite has no
+      # live network or credential dependency at all. pytest.ini also
+      # scopes collection to test_main.py, so the live-API manual scripts
+      # (smoke_test.py, test_classifier.py) are never picked up here.
+      - name: Run pytest
+        run: pytest -v
+
+  docker-build:
+    name: Verify Docker image builds
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      # push: false — this only proves the image compiles cleanly
+      # (dependencies install, app.db.init_chroma succeeds at build
+      # time, no Dockerfile errors). Nothing is published anywhere.
+      # No MISTRAL_API_KEY needed here either: init_chroma.py only
+      # downloads the local embedding model, it never calls Mistral.
+      - name: Build image (no push)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: false
+          tags: it-triage-engine:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
